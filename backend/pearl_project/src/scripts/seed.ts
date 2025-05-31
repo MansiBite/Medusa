@@ -1,3 +1,9 @@
+import { CreateInventoryLevelInput, ExecArgs } from "@medusajs/framework/types";
+import {
+  ContainerRegistrationKeys,
+  Modules,
+  ProductStatus,
+} from "@medusajs/framework/utils";
 import {
   createApiKeysWorkflow,
   createInventoryLevelsWorkflow,
@@ -7,18 +13,12 @@ import {
   createSalesChannelsWorkflow,
   createShippingOptionsWorkflow,
   createShippingProfilesWorkflow,
-  createStockLocationsWorkflow,
+  //createStockLocationsWorkflow,
   createTaxRegionsWorkflow,
   linkSalesChannelsToApiKeyWorkflow,
-  linkSalesChannelsToStockLocationWorkflow,
+  //linkSalesChannelsToStockLocationWorkflow,
   updateStoresWorkflow,
 } from "@medusajs/medusa/core-flows";
-import { CreateInventoryLevelInput, ExecArgs } from "@medusajs/framework/types";
-import {
-  ContainerRegistrationKeys,
-  Modules,
-  ProductStatus,
-} from "@medusajs/framework/utils";
 
 export default async function seedDemoData({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
@@ -89,37 +89,38 @@ export default async function seedDemoData({ container }: ExecArgs) {
   await createTaxRegionsWorkflow(container).run({
     input: countries.map((country_code) => ({
       country_code,
+      provider_id: "tp_system"
     })),
   });
   logger.info("Finished seeding tax regions.");
 
-  logger.info("Seeding stock location data...");
-  const { result: stockLocationResult } = await createStockLocationsWorkflow(
-    container
-  ).run({
-    input: {
-      locations: [
-        {
-          name: "European Warehouse",
-          address: {
-            city: "Copenhagen",
-            country_code: "DK",
-            address_1: "",
-          },
-        },
-      ],
-    },
-  });
-  const stockLocation = stockLocationResult[0];
+  //logger.info("Seeding stock location data...");
+  //const { result: stockLocationResult } = await createStockLocationsWorkflow(
+    //container
+  //).run({
+    //input: {
+     // locations: [
+        //{
+         // name: "European Warehouse",
+          //address: {
+           //city: "Copenhagen",
+           // country_code: "DK",
+           // address_1: "",
+         // },
+       // },
+      //],
+    //},
+  //});
+ // const stockLocation = stockLocationResult[0];
 
-  await link.create({
-    [Modules.STOCK_LOCATION]: {
-      stock_location_id: stockLocation.id,
-    },
-    [Modules.FULFILLMENT]: {
-      fulfillment_provider_id: "manual_manual",
-    },
-  });
+  //await link.create({
+   // [Modules.STOCK_LOCATION]: {
+     // stock_location_id: stockLocation.id,
+   // },
+   // [Modules.FULFILLMENT]: {
+     // fulfillment_provider_id: "manual_manual",
+   // },
+ // });
 
   logger.info("Seeding fulfillment data...");
   const shippingProfiles = await fulfillmentModuleService.listShippingProfiles({
@@ -182,14 +183,14 @@ export default async function seedDemoData({ container }: ExecArgs) {
     ],
   });
 
-  await link.create({
-    [Modules.STOCK_LOCATION]: {
-      stock_location_id: stockLocation.id,
-    },
-    [Modules.FULFILLMENT]: {
-      fulfillment_set_id: fulfillmentSet.id,
-    },
-  });
+  //await link.create({
+    //[Modules.STOCK_LOCATION]: {
+     // stock_location_id: stockLocation.id,
+   // },
+    //[Modules.FULFILLMENT]: {
+     // fulfillment_set_id: fulfillmentSet.id,
+   // },
+ // });
 
   await createShippingOptionsWorkflow(container).run({
     input: [
@@ -273,13 +274,13 @@ export default async function seedDemoData({ container }: ExecArgs) {
   });
   logger.info("Finished seeding fulfillment data.");
 
-  await linkSalesChannelsToStockLocationWorkflow(container).run({
-    input: {
-      id: stockLocation.id,
-      add: [defaultSalesChannel[0].id],
-    },
-  });
-  logger.info("Finished seeding stock location data.");
+ // await linkSalesChannelsToStockLocationWorkflow(container).run({
+    //input: {
+    //  id: stockLocation.id,
+     // add: [defaultSalesChannel[0].id],
+   // },
+ // });
+ // logger.info("Finished seeding stock location data.");
 
   logger.info("Seeding publishable API key data...");
   const { result: publishableApiKeyResult } = await createApiKeysWorkflow(
@@ -837,15 +838,15 @@ export default async function seedDemoData({ container }: ExecArgs) {
     fields: ["id"],
   });
 
-  const inventoryLevels: CreateInventoryLevelInput[] = [];
-  for (const inventoryItem of inventoryItems) {
-    const inventoryLevel = {
-      location_id: stockLocation.id,
-      stocked_quantity: 1000000,
-      inventory_item_id: inventoryItem.id,
-    };
-    inventoryLevels.push(inventoryLevel);
-  }
+  //const inventoryLevels: CreateInventoryLevelInput[] = [];
+  //for (const inventoryItem of inventoryItems) {
+    //const inventoryLevel = {
+    //  location_id: stockLocation.id,
+    //  stocked_quantity: 1000000,
+     // inventory_item_id: inventoryItem.id,
+   // };
+   // inventoryLevels.push(inventoryLevel);
+ // }
 
   await createInventoryLevelsWorkflow(container).run({
     input: {
