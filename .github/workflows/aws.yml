@@ -22,8 +22,7 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          registries: 057569470997.dkr.ecr.ap-south-1.amazonaws.com/medusa-backend
-
+         region: us-east-1 
 
       # Step 4: Build Docker image
       - name: Build Docker image
